@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface SucursalReactiveRepository extends ReactiveCrudRepository<Sucursal, Integer> {
-    Flux<Sucursal> findByFranchiseId(Integer franchiseId);
-    Mono<Sucursal> findByFranchiseIdAndName(Integer franchiseId, String name);
-} 
+  Flux<Sucursal> findByFranchiseId(Integer franchiseId);
+
+  Mono<Sucursal> findByFranchiseIdAndName(Integer franchiseId, String name);
+}

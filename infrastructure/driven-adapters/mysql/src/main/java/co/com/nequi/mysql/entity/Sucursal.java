@@ -15,10 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table("sucursal")
 public class Sucursal {
-    @Id
-    private Integer id;
-    private Integer franchiseId;
-    private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-} 
+  @Id private Integer id;
+  private Integer franchiseId;
+  private String name;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+}

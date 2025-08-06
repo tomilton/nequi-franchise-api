@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface FranchiseReactiveRepository extends ReactiveCrudRepository<Franchise, Integer> {
-    Mono<Franchise> findByName(String name);
-} 
+  Mono<Franchise> findByName(String name);
+}

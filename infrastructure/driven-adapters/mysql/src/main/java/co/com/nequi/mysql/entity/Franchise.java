@@ -15,9 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table("franchise")
 public class Franchise {
-    @Id
-    private Integer id;
-    private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-} 
+  @Id private Integer id;
+  private String name;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+}
