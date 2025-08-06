@@ -21,4 +21,11 @@ public class ProductDBRepository implements ProductRepository {
         .save(productMapper.toEntity(product))
         .map(productMapper::toDomain);
   }
+
+  @Override
+  public Mono<Void> delete(Integer productId, Integer sucursalId) {
+    return productReactiveRepository
+        .deleteByIdAndSucursalId(productId, sucursalId)
+        .then();
+  }
 }
