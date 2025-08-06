@@ -13,4 +13,6 @@ public interface ProductReactiveRepository extends ReactiveCrudRepository<Produc
   Mono<ProductEntity> findBySucursalIdAndName(Integer sucursalId, String name);
 
   Flux<ProductEntity> findBySucursalIdOrderByStockDesc(Integer sucursalId);
+  
+  Mono<Void> deleteByIdAndSucursalId(Integer id, Integer sucursalId);
 }

@@ -13,4 +13,8 @@ public class ProductUseCase {
   public Mono<Product> save(Product product) {
     return productRepository.save(product);
   }
+
+  public Mono<Void> delete(Integer productId, Integer sucursalId) {
+    return productRepository.delete(productId, sucursalId);
+  }
 }

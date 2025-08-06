@@ -52,4 +52,17 @@ public class Handler {
                 ServerResponse.badRequest()
                     .bodyValue("Error al crear la product: " + error.getMessage()));
   }
+
+  public Mono<ServerResponse> deleteProduct(ServerRequest serverRequest) {
+    Integer productId = Integer.valueOf(serverRequest.pathVariable("productId"));
+    Integer sucursalId = Integer.valueOf(serverRequest.pathVariable("sucursalId"));
+
+    return productUseCase
+        .delete(productId, sucursalId)
+        .then(ServerResponse.ok().bodyValue("Producto eliminado exitosamente"))
+        .onErrorResume(
+            error ->
+                ServerResponse.badRequest()
+                    .bodyValue("Error al eliminar el producto: " + error.getMessage()));
+  }
 }

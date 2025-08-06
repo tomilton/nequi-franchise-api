@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono;
 public interface ProductRepository {
 
   Mono<Product> save(Product product);
+  
+  Mono<Void> delete(Integer productId, Integer sucursalId);
 }
