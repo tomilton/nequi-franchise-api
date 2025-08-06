@@ -1,8 +1,10 @@
 package co.com.nequi.api;
 
 import co.com.nequi.model.franchise.Franchise;
+import co.com.nequi.model.product.Product;
 import co.com.nequi.model.sucursal.Sucursal;
 import co.com.nequi.usecase.franchise.FranchiseUseCase;
+import co.com.nequi.usecase.product.ProductUseCase;
 import co.com.nequi.usecase.sucursal.SucursalUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,21 +18,7 @@ public class Handler {
 
   private final FranchiseUseCase franchiseUseCase;
   private final SucursalUseCase sucursalUseCase;
-
-  public Mono<ServerResponse> listenGETUseCase(ServerRequest serverRequest) {
-    // useCase.logic();
-    return ServerResponse.ok().bodyValue("");
-  }
-
-  public Mono<ServerResponse> listenGETOtherUseCase(ServerRequest serverRequest) {
-    // useCase2.logic();
-    return ServerResponse.ok().bodyValue("");
-  }
-
-  public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-    // useCase.logic();
-    return ServerResponse.ok().bodyValue("");
-  }
+  private final ProductUseCase productUseCase;
 
   public Mono<ServerResponse> createFranchise(ServerRequest serverRequest) {
     return serverRequest
@@ -52,5 +40,16 @@ public class Handler {
             error ->
                 ServerResponse.badRequest()
                     .bodyValue("Error al crear la sucursal: " + error.getMessage()));
+  }
+
+  public Mono<ServerResponse> createProduct(ServerRequest serverRequest) {
+    return serverRequest
+        .bodyToMono(Product.class)
+        .flatMap(productUseCase::save)
+        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal))
+        .onErrorResume(
+            error ->
+                ServerResponse.badRequest()
+                    .bodyValue("Error al crear la product: " + error.getMessage()));
   }
 }
