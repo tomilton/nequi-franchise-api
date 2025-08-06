@@ -1,7 +1,7 @@
 package co.com.nequi.mysql.service;
 
-import co.com.nequi.model.franchise.gateways.repositories.FranchiseRepository;
-import co.com.nequi.model.franchise.model.Franchise;
+import co.com.nequi.model.franchise.gateways.FranchiseRepository;
+import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.mysql.mapper.FranchiseMapper;
 import co.com.nequi.mysql.repository.FranchiseReactiveRepository;
 import lombok.RequiredArgsConstructor;

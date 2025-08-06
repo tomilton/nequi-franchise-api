@@ -1,6 +1,6 @@
 package co.com.nequi.mysql.mapper;
 
-import co.com.nequi.model.franchise.model.Franchise;
+import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.mysql.entity.FranchiseEntity;
 import org.mapstruct.Mapper;
 
