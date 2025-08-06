@@ -1,16 +1,16 @@
 package co.com.nequi.mysql.repository;
 
-import co.com.nequi.mysql.entity.Product;
+import co.com.nequi.mysql.entity.ProductEntity;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface ProductReactiveRepository extends ReactiveCrudRepository<Product, Integer> {
-  Flux<Product> findBySucursalId(Integer sucursalId);
+public interface ProductReactiveRepository extends ReactiveCrudRepository<ProductEntity, Integer> {
+  Flux<ProductEntity> findBySucursalId(Integer sucursalId);
 
-  Mono<Product> findBySucursalIdAndName(Integer sucursalId, String name);
+  Mono<ProductEntity> findBySucursalIdAndName(Integer sucursalId, String name);
 
-  Flux<Product> findBySucursalIdOrderByStockDesc(Integer sucursalId);
+  Flux<ProductEntity> findBySucursalIdOrderByStockDesc(Integer sucursalId);
 }
