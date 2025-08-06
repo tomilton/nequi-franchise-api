@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface ProductReactiveRepository extends ReactiveCrudRepository<Product, Integer> {
-    Flux<Product> findBySucursalId(Integer branchId);
+    Flux<Product> findBySucursalId(Integer sucursalId);
     Mono<Product> findBySucursalIdAndName(Integer sucursalId, String name);
-    Flux<Product> findBySucursalIdOrderByStockDesc(Integer branchId);
+    Flux<Product> findBySucursalIdOrderByStockDesc(Integer sucursalId);
 } 
