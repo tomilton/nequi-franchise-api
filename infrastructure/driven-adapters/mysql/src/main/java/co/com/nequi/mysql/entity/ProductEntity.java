@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("product")
-public class Product {
+public class ProductEntity {
   @Id private Integer id;
   private Integer sucursalId;
   private String name;
