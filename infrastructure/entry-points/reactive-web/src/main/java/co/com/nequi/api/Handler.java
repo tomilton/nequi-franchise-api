@@ -1,7 +1,9 @@
 package co.com.nequi.api;
 
-import co.com.nequi.model.franchise.model.Franchise;
+import co.com.nequi.model.franchise.Franchise;
+import co.com.nequi.model.sucursal.Sucursal;
 import co.com.nequi.usecase.franchise.FranchiseUseCase;
+import co.com.nequi.usecase.sucursal.SucursalUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -13,6 +15,7 @@ import reactor.core.publisher.Mono;
 public class Handler {
 
   private final FranchiseUseCase franchiseUseCase;
+  private final SucursalUseCase sucursalUseCase;
 
   public Mono<ServerResponse> listenGETUseCase(ServerRequest serverRequest) {
     // useCase.logic();
@@ -38,5 +41,16 @@ public class Handler {
             error ->
                 ServerResponse.badRequest()
                     .bodyValue("Error al crear la franquicia: " + error.getMessage()));
+  }
+
+  public Mono<ServerResponse> createSucursal(ServerRequest serverRequest) {
+    return serverRequest
+        .bodyToMono(Sucursal.class)
+        .flatMap(sucursalUseCase::save)
+        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal))
+        .onErrorResume(
+            error ->
+                ServerResponse.badRequest()
+                    .bodyValue("Error al crear la sucursal: " + error.getMessage()));
   }
 }
