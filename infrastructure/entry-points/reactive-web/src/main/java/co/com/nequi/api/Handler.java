@@ -12,6 +12,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 public class Handler {
@@ -64,5 +66,22 @@ public class Handler {
             error ->
                 ServerResponse.badRequest()
                     .bodyValue("Error al eliminar el producto: " + error.getMessage()));
+  }
+
+  public Mono<ServerResponse> updateProductStock(ServerRequest serverRequest) {
+    Integer productId = Integer.valueOf(serverRequest.pathVariable("productId"));
+
+    return serverRequest
+        .bodyToMono(Map.class)
+        .flatMap(
+            body -> {
+              Integer newStock = Integer.valueOf(body.get("stock").toString());
+              return productUseCase.updateStock(productId, newStock);
+            })
+        .flatMap(product -> ServerResponse.ok().bodyValue(product))
+        .onErrorResume(
+            error ->
+                ServerResponse.badRequest()
+                    .bodyValue("Error al actualizar el stock del producto: " + error.getMessage()));
   }
 }

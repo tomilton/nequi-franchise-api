@@ -24,8 +24,14 @@ public class ProductDBRepository implements ProductRepository {
 
   @Override
   public Mono<Void> delete(Integer productId, Integer sucursalId) {
+    return productReactiveRepository.deleteByIdAndSucursalId(productId, sucursalId).then();
+  }
+
+  @Override
+  public Mono<Product> updateStock(Integer productId, Integer newStock) {
     return productReactiveRepository
-        .deleteByIdAndSucursalId(productId, sucursalId)
-        .then();
+        .updateStockById(newStock, productId)
+        .then(productReactiveRepository.findById(productId))
+        .map(productMapper::toDomain);
   }
 }
