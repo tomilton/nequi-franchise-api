@@ -1,5 +1,6 @@
 package co.com.nequi.mysql.service;
 
+import co.com.nequi.model.enums.InfrastructureError;
 import co.com.nequi.model.franchise.gateways.FranchiseRepository;
 import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.mysql.mapper.FranchiseMapper;
@@ -19,7 +20,8 @@ public class FranchiseDBRepository implements FranchiseRepository {
   public Mono<Franchise> save(Franchise franchise) {
     return franchiseReactiveRepository
         .save(franchiseMapper.toEntity(franchise))
-        .map(franchiseMapper::toDomain);
+        .map(franchiseMapper::toDomain)
+        .onErrorResume(this::getError);
   }
 
   @Override
@@ -27,6 +29,19 @@ public class FranchiseDBRepository implements FranchiseRepository {
     return franchiseReactiveRepository
         .updateNameById(newName, franchiseId)
         .then(franchiseReactiveRepository.findById(franchiseId))
-        .map(franchiseMapper::toDomain);
+        .map(franchiseMapper::toDomain)
+        .onErrorResume(this::getError);
+  }
+
+  @Override
+  public Mono<Franchise> findById(Integer franchiseId) {
+    return franchiseReactiveRepository
+        .findById(franchiseId)
+        .map(franchiseMapper::toDomain)
+        .onErrorResume(this::getError);
+  }
+
+  private <T> Mono<T> getError(Throwable throwable) {
+    return Mono.error(InfrastructureError.DB_ERROR.build(throwable));
   }
 }

@@ -1,5 +1,6 @@
 package co.com.nequi.mysql.service;
 
+import co.com.nequi.model.enums.InfrastructureError;
 import co.com.nequi.model.sucursal.Sucursal;
 import co.com.nequi.model.sucursal.gateways.SucursalRepository;
 import co.com.nequi.mysql.mapper.SucursalMapper;
@@ -19,7 +20,8 @@ public class SucursalDBRepository implements SucursalRepository {
   public Mono<Sucursal> save(Sucursal sucursal) {
     return sucursalReactiveRepository
         .save(sucursalMapper.toEntity(sucursal))
-        .map(sucursalMapper::toDomain);
+        .map(sucursalMapper::toDomain)
+        .onErrorResume(this::getError);
   }
 
   @Override
@@ -27,6 +29,11 @@ public class SucursalDBRepository implements SucursalRepository {
     return sucursalReactiveRepository
         .updateNameById(newName, sucursalId)
         .then(sucursalReactiveRepository.findById(sucursalId))
-        .map(sucursalMapper::toDomain);
+        .map(sucursalMapper::toDomain)
+        .onErrorResume(this::getError);
+  }
+
+  private <T> Mono<T> getError(Throwable throwable) {
+    return Mono.error(InfrastructureError.DB_ERROR.build(throwable));
   }
 }

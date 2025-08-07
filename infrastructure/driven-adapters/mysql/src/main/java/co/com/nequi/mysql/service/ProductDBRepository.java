@@ -1,5 +1,6 @@
 package co.com.nequi.mysql.service;
 
+import co.com.nequi.model.enums.InfrastructureError;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.product.gateways.ProductRepository;
 import co.com.nequi.mysql.mapper.ProductMapper;
@@ -20,12 +21,16 @@ public class ProductDBRepository implements ProductRepository {
   public Mono<Product> save(Product product) {
     return productReactiveRepository
         .save(productMapper.toEntity(product))
-        .map(productMapper::toDomain);
+        .map(productMapper::toDomain)
+        .onErrorResume(this::getError);
   }
 
   @Override
   public Mono<Void> delete(Integer productId, Integer sucursalId) {
-    return productReactiveRepository.deleteByIdAndSucursalId(productId, sucursalId).then();
+    return productReactiveRepository
+        .deleteByIdAndSucursalId(productId, sucursalId)
+        .then()
+        .onErrorResume(this::getError);
   }
 
   @Override
@@ -33,14 +38,16 @@ public class ProductDBRepository implements ProductRepository {
     return productReactiveRepository
         .updateStockById(newStock, productId)
         .then(productReactiveRepository.findById(productId))
-        .map(productMapper::toDomain);
+        .map(productMapper::toDomain)
+        .onErrorResume(this::getError);
   }
 
   @Override
   public Flux<Product> findProductsWithMaxStockByFranchise(Integer franchiseId) {
     return productReactiveRepository
         .findProductsWithMaxStockByFranchise(franchiseId)
-        .map(productMapper::toDomain);
+        .map(productMapper::toDomain)
+        .onErrorResume(this::getError);
   }
 
   @Override
@@ -48,6 +55,11 @@ public class ProductDBRepository implements ProductRepository {
     return productReactiveRepository
         .updateNameById(newName, productId)
         .then(productReactiveRepository.findById(productId))
-        .map(productMapper::toDomain);
+        .map(productMapper::toDomain)
+        .onErrorResume(this::getError);
+  }
+
+  private <T> Mono<T> getError(Throwable throwable) {
+    return Mono.error(InfrastructureError.DB_ERROR.build(throwable));
   }
 }
