@@ -13,4 +13,8 @@ public class FranchiseUseCase {
   public Mono<Franchise> save(Franchise franchise) {
     return franchiseRepository.save(franchise);
   }
+  
+  public Mono<Franchise> updateName(Integer franchiseId, String newName) {
+    return franchiseRepository.updateName(franchiseId, newName);
+  }
 }

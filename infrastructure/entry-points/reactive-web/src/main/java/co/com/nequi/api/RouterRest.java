@@ -20,6 +20,7 @@ public class RouterRest {
         .andRoute(POST("/api/product"), handler::createProduct)
         .andRoute(DELETE("/api/sucursal/{sucursalId}/product/{productId}"), handler::deleteProduct)
         .andRoute(PUT("/api/product/{productId}/stock"), handler::updateProductStock)
-        .andRoute(GET("/api/franchise/{franchiseId}/products/max-stock"), handler::getProductsWithMaxStockByFranchise);
+        .andRoute(GET("/api/franchise/{franchiseId}/products/max-stock"), handler::getProductsWithMaxStockByFranchise)
+        .andRoute(PUT("/api/franchise/{franchiseId}/name"), handler::updateFranchiseName);
   }
 }

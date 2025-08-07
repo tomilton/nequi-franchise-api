@@ -96,4 +96,20 @@ public class Handler {
                 ServerResponse.badRequest()
                     .bodyValue("Error al obtener productos con máximo stock: " + error.getMessage()));
   }
+
+  public Mono<ServerResponse> updateFranchiseName(ServerRequest serverRequest) {
+    Integer franchiseId = Integer.valueOf(serverRequest.pathVariable("franchiseId"));
+    
+    return serverRequest
+        .bodyToMono(Map.class)
+        .flatMap(body -> {
+          String newName = body.get("name").toString();
+          return franchiseUseCase.updateName(franchiseId, newName);
+        })
+        .flatMap(franchise -> ServerResponse.ok().bodyValue(franchise))
+        .onErrorResume(
+            error ->
+                ServerResponse.badRequest()
+                    .bodyValue("Error al actualizar el nombre de la franquicia: " + error.getMessage()));
+  }
 }
