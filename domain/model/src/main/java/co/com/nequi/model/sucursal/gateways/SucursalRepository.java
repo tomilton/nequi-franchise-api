@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono;
 public interface SucursalRepository {
 
   Mono<Sucursal> save(Sucursal sucursal);
+  
+  Mono<Sucursal> updateName(Integer sucursalId, String newName);
 }
