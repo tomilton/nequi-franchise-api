@@ -17,4 +17,8 @@ public class ProductUseCase {
   public Mono<Void> delete(Integer productId, Integer sucursalId) {
     return productRepository.delete(productId, sucursalId);
   }
+  
+  public Mono<Product> updateStock(Integer productId, Integer newStock) {
+    return productRepository.updateStock(productId, newStock);
+  }
 }
