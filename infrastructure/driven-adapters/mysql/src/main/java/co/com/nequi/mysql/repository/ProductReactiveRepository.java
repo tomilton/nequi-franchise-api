@@ -32,4 +32,7 @@ public interface ProductReactiveRepository extends ReactiveCrudRepository<Produc
       ORDER BY s.id, p.stock DESC
       """)
   Flux<ProductEntity> findProductsWithMaxStockByFranchise(Integer franchiseId);
+  
+  @Query("UPDATE product SET name = :newName, updated_at = NOW() WHERE id = :id")
+  Mono<Integer> updateNameById(String newName, Integer id);
 }

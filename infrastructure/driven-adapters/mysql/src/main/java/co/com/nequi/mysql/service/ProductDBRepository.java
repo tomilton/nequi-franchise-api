@@ -42,4 +42,12 @@ public class ProductDBRepository implements ProductRepository {
         .findProductsWithMaxStockByFranchise(franchiseId)
         .map(productMapper::toDomain);
   }
+
+  @Override
+  public Mono<Product> updateName(Integer productId, String newName) {
+    return productReactiveRepository
+        .updateNameById(newName, productId)
+        .then(productReactiveRepository.findById(productId))
+        .map(productMapper::toDomain);
+  }
 }
