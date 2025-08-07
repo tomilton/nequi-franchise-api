@@ -1,47 +1,309 @@
-# Proyecto Base Implementando Clean Architecture
+# Nequi Franchise API
 
-## Antes de Iniciar
+API REST reactiva para la gestión de franquicias, sucursales y productos desarrollada con Spring Boot 3, WebFlux y arquitectura hexagonal.
 
-Empezaremos por explicar los diferentes componentes del proyectos y partiremos de los componentes externos, continuando con los componentes core de negocio (dominio) y por �ltimo el inicio y configuraci�n de la aplicaci�n.
+## 🚀 Tecnologías Utilizadas
 
-Lee el art�culo [Clean Architecture � Aislando los detalles](https://medium.com/bancolombia-tech/clean-architecture-aislando-los-detalles-4f9530f35d7a)
+- **Java 21**
+- **Spring Boot 3.5.4**
+- **Spring WebFlux** (Reactivo)
+- **R2DBC** (Conexión reactiva a base de datos)
+- **MySQL 8.0**
+- **Gradle 8.14.3**
+- **Docker & Docker Compose**
+- **Arquitectura Hexagonal (Clean Architecture)**
 
-# Arquitectura
+## 📋 Prerrequisitos
 
-![Clean Architecture](https://miro.medium.com/max/1400/1*ZdlHz8B0-qu9Y-QO3AXR_w.png)
+Antes de comenzar, asegúrate de tener instalado:
 
-## Domain
+- **Java 21** o superior
+- **Gradle 8.14.3** o superior
+- **Docker** y **Docker Compose**
+- **Git**
 
-Es el m�dulo m�s interno de la arquitectura, pertenece a la capa del dominio y encapsula la l�gica y reglas del negocio mediante modelos y entidades del dominio.
+### Verificar instalaciones
 
-## Usecases
+```bash
+# Verificar Java
+java -version
 
-Este m�dulo gradle perteneciente a la capa del dominio, implementa los casos de uso del sistema, define l�gica de aplicaci�n y reacciona a las invocaciones desde el m�dulo de entry points, orquestando los flujos hacia el m�dulo de entities.
+# Verificar Gradle
+./gradlew --version
 
-## Infrastructure
+# Verificar Docker
+docker --version
+docker-compose --version
+```
 
-### Helpers
+## 🏗️ Arquitectura del Proyecto
 
-En el apartado de helpers tendremos utilidades generales para los Driven Adapters y Entry Points.
+El proyecto sigue la arquitectura hexagonal (Clean Architecture) con la siguiente estructura:
 
-Estas utilidades no est�n arraigadas a objetos concretos, se realiza el uso de generics para modelar comportamientos
-gen�ricos de los diferentes objetos de persistencia que puedan existir, este tipo de implementaciones se realizan
-basadas en el patr�n de dise�o [Unit of Work y Repository](https://medium.com/@krzychukosobudzki/repository-design-pattern-bc490b256006)
+```
+nequi-franchise-api/
+├── applications/
+│   └── app-service/          # Aplicación principal
+├── domain/
+│   ├── model/               # Entidades y reglas de negocio
+│   └── usecase/             # Casos de uso
+├── infrastructure/
+│   ├── driven-adapters/     # Adaptadores de salida (BD, APIs externas)
+│   └── entry-points/        # Adaptadores de entrada (REST API)
+└── deployment/              # Configuración de despliegue
+```
 
-Estas clases no puede existir solas y debe heredarse su compartimiento en los **Driven Adapters**
+## 🚀 Despliegue Local
 
-### Driven Adapters
+### Opción 1: Despliegue con Docker Compose (Recomendado)
 
-Los driven adapter representan implementaciones externas a nuestro sistema, como lo son conexiones a servicios rest,
-soap, bases de datos, lectura de archivos planos, y en concreto cualquier origen y fuente de datos con la que debamos
-interactuar.
+1. **Clonar el repositorio**
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   cd nequi-franchise-api
+   ```
 
-### Entry Points
+2. **Levantar la base de datos MySQL**
+   ```bash
+   docker-compose up -d mysql
+   ```
 
-Los entry points representan los puntos de entrada de la aplicaci�n o el inicio de los flujos de negocio.
+3. **Verificar que MySQL esté funcionando**
+   ```bash
+   docker-compose ps
+   ```
 
-## Application
+4. **Ejecutar la aplicación**
+   ```bash
+   ./gradlew bootRun
+   ```
 
-Este m�dulo es el m�s externo de la arquitectura, es el encargado de ensamblar los distintos m�dulos, resolver las dependencias y crear los beans de los casos de use (UseCases) de forma autom�tica, inyectando en �stos instancias concretas de las dependencias declaradas. Adem�s inicia la aplicaci�n (es el �nico m�dulo del proyecto donde encontraremos la funci�n �public static void main(String[] args)�.
+### Opción 2: Despliegue Manual
 
-**Los beans de los casos de uso se disponibilizan automaticamente gracias a un '@ComponentScan' ubicado en esta capa.**
+1. **Configurar MySQL localmente**
+   - Instalar MySQL 8.0
+   - Crear base de datos: `nequi_franchise`
+   - Ejecutar el script `db.sql` para crear las tablas
+
+2. **Configurar variables de entorno**
+   ```bash
+   export SPRING_R2DBC_URL=r2dbc:mysql://localhost:3306/nequi_franchise
+   export SPRING_R2DBC_USERNAME=root
+   export SPRING_R2DBC_PASSWORD=password
+   ```
+
+3. **Ejecutar la aplicación**
+   ```bash
+   ./gradlew bootRun
+   ```
+
+## 🧪 Ejecutar Tests
+
+### Ejecutar todos los tests
+```bash
+./gradlew test
+```
+
+### Ejecutar tests específicos
+```bash
+# Tests de la API
+./gradlew test --tests "RouterRestTest"
+
+# Tests de casos de uso
+./gradlew test --tests "FranchiseUseCaseTest"
+
+# Tests de infraestructura
+./gradlew test --tests "*Repository*"
+```
+
+### Generar reportes de cobertura
+```bash
+./gradlew jacocoMergedReport
+```
+
+## 📊 Endpoints de la API
+
+### Franquicias
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/franchise` | Crear una nueva franquicia |
+| PUT | `/api/franchise/{id}/name` | Actualizar nombre de franquicia |
+
+### Sucursales
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/sucursal` | Crear una nueva sucursal |
+| PUT | `/api/sucursal/{id}/name` | Actualizar nombre de sucursal |
+
+### Productos
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/product` | Crear un nuevo producto |
+| PUT | `/api/product/{id}/stock` | Actualizar stock de producto |
+| PUT | `/api/product/{id}/name` | Actualizar nombre de producto |
+| DELETE | `/api/sucursal/{sucursalId}/product/{productId}` | Eliminar producto |
+| GET | `/api/franchise/{franchiseId}/products/max-stock` | Obtener productos con máximo stock por franquicia |
+
+## 📝 Ejemplos de Uso
+
+### Crear una franquicia
+```bash
+curl -X POST http://localhost:8080/api/franchise \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Mi Franquicia"}'
+```
+
+### Crear una sucursal
+```bash
+curl -X POST http://localhost:8080/api/sucursal \
+  -H "Content-Type: application/json" \
+  -d '{"franchiseId": 1, "name": "Sucursal Centro"}'
+```
+
+### Crear un producto
+```bash
+curl -X POST http://localhost:8080/api/product \
+  -H "Content-Type: application/json" \
+  -d '{"sucursalId": 1, "name": "Producto A", "stock": 100}'
+```
+
+### Actualizar stock de producto
+```bash
+curl -X PUT http://localhost:8080/api/product/1/stock \
+  -H "Content-Type: application/json" \
+  -d '{"stock": 150}'
+```
+
+## 🔧 Configuración
+
+### Variables de entorno
+
+| Variable | Descripción | Valor por defecto |
+|----------|-------------|-------------------|
+| `SERVER_PORT` | Puerto del servidor | 8080 |
+| `SPRING_R2DBC_URL` | URL de conexión a MySQL | r2dbc:mysql://localhost:3306/nequi_franchise |
+| `SPRING_R2DBC_USERNAME` | Usuario de MySQL | root |
+| `SPRING_R2DBC_PASSWORD` | Contraseña de MySQL | password |
+
+### Configuración de CORS
+
+La API está configurada para aceptar peticiones desde:
+- `http://localhost:4200` (Angular)
+- `http://localhost:8080` (Aplicación)
+
+## 🐳 Docker
+
+### Construir imagen Docker
+```bash
+./gradlew bootBuildImage
+```
+
+### Ejecutar con Docker
+```bash
+docker run -p 8080:8080 nequi-franchise-api:latest
+```
+
+## 📈 Monitoreo
+
+### Health Check
+```bash
+curl http://localhost:8080/actuator/health
+```
+
+### Métricas Prometheus
+```bash
+curl http://localhost:8080/actuator/prometheus
+```
+
+## 🛠️ Desarrollo
+
+### Estructura de la base de datos
+
+```sql
+-- Franquicias
+CREATE TABLE franchise (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Sucursales
+CREATE TABLE sucursal (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    franchise_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (franchise_id) REFERENCES franchise(id) ON DELETE CASCADE
+);
+
+-- Productos
+CREATE TABLE product (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sucursal_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursal(id) ON DELETE CASCADE
+);
+```
+
+### Comandos útiles
+
+```bash
+# Limpiar y construir
+./gradlew clean build
+
+# Ejecutar tests con reportes
+./gradlew test jacocoMergedReport
+
+# Ejecutar análisis estático
+./gradlew sonarqube
+
+# Generar documentación
+./gradlew javadoc
+
+# Verificar estructura del proyecto
+./gradlew validateStructure
+```
+
+## 🚨 Solución de Problemas
+
+### Error de conexión a MySQL
+- Verificar que MySQL esté ejecutándose: `docker-compose ps`
+- Verificar credenciales en `application.yaml`
+- Revisar logs: `docker-compose logs mysql`
+
+### Puerto ocupado
+- Cambiar puerto en `application.yaml`: `server.port: 8081`
+- Verificar procesos: `netstat -tulpn | grep 8080`
+
+### Error de compilación
+- Verificar versión de Java: `java -version`
+- Limpiar cache: `./gradlew clean`
+- Actualizar dependencias: `./gradlew --refresh-dependencies`
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
+## 👥 Contribución
+
+1. Fork el proyecto
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
+
+## 📞 Contacto
+
+Para preguntas o soporte, contacta al equipo de desarrollo:
+
+- **Email**: tomilton@hotmail.com
+- **Email**: milton.sanchez7@gmail.com
+- **Teléfono**: 3127340763
