@@ -6,6 +6,7 @@ import co.com.nequi.mysql.mapper.ProductMapper;
 import co.com.nequi.mysql.repository.ProductReactiveRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
@@ -32,6 +33,13 @@ public class ProductDBRepository implements ProductRepository {
     return productReactiveRepository
         .updateStockById(newStock, productId)
         .then(productReactiveRepository.findById(productId))
+        .map(productMapper::toDomain);
+  }
+
+  @Override
+  public Flux<Product> findProductsWithMaxStockByFranchise(Integer franchiseId) {
+    return productReactiveRepository
+        .findProductsWithMaxStockByFranchise(franchiseId)
         .map(productMapper::toDomain);
   }
 }

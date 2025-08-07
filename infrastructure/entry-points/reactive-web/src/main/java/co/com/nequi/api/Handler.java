@@ -70,18 +70,30 @@ public class Handler {
 
   public Mono<ServerResponse> updateProductStock(ServerRequest serverRequest) {
     Integer productId = Integer.valueOf(serverRequest.pathVariable("productId"));
-
+    
     return serverRequest
         .bodyToMono(Map.class)
-        .flatMap(
-            body -> {
-              Integer newStock = Integer.valueOf(body.get("stock").toString());
-              return productUseCase.updateStock(productId, newStock);
-            })
+        .flatMap(body -> {
+          Integer newStock = Integer.valueOf(body.get("stock").toString());
+          return productUseCase.updateStock(productId, newStock);
+        })
         .flatMap(product -> ServerResponse.ok().bodyValue(product))
         .onErrorResume(
             error ->
                 ServerResponse.badRequest()
                     .bodyValue("Error al actualizar el stock del producto: " + error.getMessage()));
+  }
+
+  public Mono<ServerResponse> getProductsWithMaxStockByFranchise(ServerRequest serverRequest) {
+    Integer franchiseId = Integer.valueOf(serverRequest.pathVariable("franchiseId"));
+    
+    return productUseCase
+        .findProductsWithMaxStockByFranchise(franchiseId)
+        .collectList()
+        .flatMap(products -> ServerResponse.ok().bodyValue(products))
+        .onErrorResume(
+            error ->
+                ServerResponse.badRequest()
+                    .bodyValue("Error al obtener productos con máximo stock: " + error.getMessage()));
   }
 }
