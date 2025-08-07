@@ -13,4 +13,6 @@ public interface ProductRepository {
   Mono<Product> updateStock(Integer productId, Integer newStock);
   
   Flux<Product> findProductsWithMaxStockByFranchise(Integer franchiseId);
+  
+  Mono<Product> updateName(Integer productId, String newName);
 }

@@ -26,4 +26,8 @@ public class ProductUseCase {
   public Flux<Product> findProductsWithMaxStockByFranchise(Integer franchiseId) {
     return productRepository.findProductsWithMaxStockByFranchise(franchiseId);
   }
+  
+  public Mono<Product> updateName(Integer productId, String newName) {
+    return productRepository.updateName(productId, newName);
+  }
 }

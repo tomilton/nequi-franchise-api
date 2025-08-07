@@ -22,6 +22,7 @@ public class RouterRest {
         .andRoute(PUT("/api/product/{productId}/stock"), handler::updateProductStock)
         .andRoute(GET("/api/franchise/{franchiseId}/products/max-stock"), handler::getProductsWithMaxStockByFranchise)
         .andRoute(PUT("/api/franchise/{franchiseId}/name"), handler::updateFranchiseName)
-        .andRoute(PUT("/api/sucursal/{sucursalId}/name"), handler::updateSucursalName);
+        .andRoute(PUT("/api/sucursal/{sucursalId}/name"), handler::updateSucursalName)
+        .andRoute(PUT("/api/product/{productId}/name"), handler::updateProductName);
   }
 }

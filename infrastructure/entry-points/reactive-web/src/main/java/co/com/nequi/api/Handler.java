@@ -128,4 +128,20 @@ public class Handler {
                 ServerResponse.badRequest()
                     .bodyValue("Error al actualizar el nombre de la sucursal: " + error.getMessage()));
   }
+
+  public Mono<ServerResponse> updateProductName(ServerRequest serverRequest) {
+    Integer productId = Integer.valueOf(serverRequest.pathVariable("productId"));
+    
+    return serverRequest
+        .bodyToMono(Map.class)
+        .flatMap(body -> {
+          String newName = body.get("name").toString();
+          return productUseCase.updateName(productId, newName);
+        })
+        .flatMap(product -> ServerResponse.ok().bodyValue(product))
+        .onErrorResume(
+            error ->
+                ServerResponse.badRequest()
+                    .bodyValue("Error al actualizar el nombre del producto: " + error.getMessage()));
+  }
 }
