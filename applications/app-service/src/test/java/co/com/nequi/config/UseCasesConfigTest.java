@@ -1,5 +1,8 @@
 package co.com.nequi.config;
 
+import co.com.nequi.model.franchise.gateways.FranchiseRepository;
+import co.com.nequi.model.product.gateways.ProductRepository;
+import co.com.nequi.model.sucursal.gateways.SucursalRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +25,7 @@ public class UseCasesConfigTest {
                 }
             }
 
-            assertTrue(useCaseBeanFound, "No beans ending with 'Use Case' were found");
+            assertTrue(useCaseBeanFound, "No beans ending with 'UseCase' were found");
         }
     }
 
@@ -31,14 +34,70 @@ public class UseCasesConfigTest {
     static class TestConfig {
 
         @Bean
-        public MyUseCase myUseCase() {
-            return new MyUseCase();
+        public FranchiseRepository franchiseRepository() {
+            return new MockFranchiseRepository();
+        }
+
+        @Bean
+        public SucursalRepository sucursalRepository() {
+            return new MockSucursalRepository();
+        }
+
+        @Bean
+        public ProductRepository productRepository() {
+            return new MockProductRepository();
         }
     }
 
-    static class MyUseCase {
-        public String execute() {
-            return "MyUseCase Test";
+    // Mock implementations for testing
+    static class MockFranchiseRepository implements FranchiseRepository {
+        @Override
+        public reactor.core.publisher.Mono<co.com.nequi.model.franchise.Franchise> save(co.com.nequi.model.franchise.Franchise franchise) {
+            return reactor.core.publisher.Mono.empty();
+        }
+
+        @Override
+        public reactor.core.publisher.Mono<co.com.nequi.model.franchise.Franchise> updateName(Integer franchiseId, String newName) {
+            return reactor.core.publisher.Mono.empty();
+        }
+    }
+
+    static class MockSucursalRepository implements SucursalRepository {
+        @Override
+        public reactor.core.publisher.Mono<co.com.nequi.model.sucursal.Sucursal> save(co.com.nequi.model.sucursal.Sucursal sucursal) {
+            return reactor.core.publisher.Mono.empty();
+        }
+
+        @Override
+        public reactor.core.publisher.Mono<co.com.nequi.model.sucursal.Sucursal> updateName(Integer sucursalId, String newName) {
+            return reactor.core.publisher.Mono.empty();
+        }
+    }
+
+    static class MockProductRepository implements ProductRepository {
+        @Override
+        public reactor.core.publisher.Mono<co.com.nequi.model.product.Product> save(co.com.nequi.model.product.Product product) {
+            return reactor.core.publisher.Mono.empty();
+        }
+
+        @Override
+        public reactor.core.publisher.Mono<Void> delete(Integer productId, Integer sucursalId) {
+            return reactor.core.publisher.Mono.empty();
+        }
+
+        @Override
+        public reactor.core.publisher.Mono<co.com.nequi.model.product.Product> updateStock(Integer productId, Integer newStock) {
+            return reactor.core.publisher.Mono.empty();
+        }
+
+        @Override
+        public reactor.core.publisher.Flux<co.com.nequi.model.product.Product> findProductsWithMaxStockByFranchise(Integer franchiseId) {
+            return reactor.core.publisher.Flux.empty();
+        }
+
+        @Override
+        public reactor.core.publisher.Mono<co.com.nequi.model.product.Product> updateName(Integer productId, String newName) {
+            return reactor.core.publisher.Mono.empty();
         }
     }
 }
