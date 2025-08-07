@@ -66,6 +66,8 @@ class FranchiseUseCaseTest {
     String newName = "Updated Franchise Name";
     Franchise updatedFranchise = testFranchise.toBuilder().name(newName).build();
     
+    when(franchiseRepository.findById(anyInt()))
+        .thenReturn(Mono.just(testFranchise));
     when(franchiseRepository.updateName(anyInt(), anyString()))
         .thenReturn(Mono.just(updatedFranchise));
 
@@ -81,6 +83,8 @@ class FranchiseUseCaseTest {
     Integer franchiseId = 1;
     String newName = "Updated Franchise Name";
     String errorMessage = "Error updating franchise name";
+    when(franchiseRepository.findById(anyInt()))
+        .thenReturn(Mono.just(testFranchise));
     when(franchiseRepository.updateName(anyInt(), anyString()))
         .thenReturn(Mono.error(new RuntimeException(errorMessage)));
 
