@@ -26,33 +26,21 @@ public class Handler {
     return serverRequest
         .bodyToMono(Franchise.class)
         .flatMap(franchiseUseCase::save)
-        .flatMap(franchise -> ServerResponse.ok().bodyValue(franchise))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue("Error al crear la franquicia: " + error.getMessage()));
+        .flatMap(franchise -> ServerResponse.ok().bodyValue(franchise));
   }
 
   public Mono<ServerResponse> createSucursal(ServerRequest serverRequest) {
     return serverRequest
         .bodyToMono(Sucursal.class)
         .flatMap(sucursalUseCase::save)
-        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue("Error al crear la sucursal: " + error.getMessage()));
+        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal));
   }
 
   public Mono<ServerResponse> createProduct(ServerRequest serverRequest) {
     return serverRequest
         .bodyToMono(Product.class)
         .flatMap(productUseCase::save)
-        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue("Error al crear la product: " + error.getMessage()));
+        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal));
   }
 
   public Mono<ServerResponse> deleteProduct(ServerRequest serverRequest) {
@@ -61,11 +49,7 @@ public class Handler {
 
     return productUseCase
         .delete(productId, sucursalId)
-        .then(ServerResponse.ok().bodyValue("Producto eliminado exitosamente"))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue("Error al eliminar el producto: " + error.getMessage()));
+        .then(ServerResponse.ok().bodyValue("Producto eliminado exitosamente"));
   }
 
   public Mono<ServerResponse> updateProductStock(ServerRequest serverRequest) {
@@ -78,11 +62,7 @@ public class Handler {
               Integer newStock = Integer.valueOf(body.get("stock").toString());
               return productUseCase.updateStock(productId, newStock);
             })
-        .flatMap(product -> ServerResponse.ok().bodyValue(product))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue("Error al actualizar el stock del producto: " + error.getMessage()));
+        .flatMap(product -> ServerResponse.ok().bodyValue(product));
   }
 
   public Mono<ServerResponse> getProductsWithMaxStockByFranchise(ServerRequest serverRequest) {
@@ -91,12 +71,7 @@ public class Handler {
     return productUseCase
         .findProductsWithMaxStockByFranchise(franchiseId)
         .collectList()
-        .flatMap(products -> ServerResponse.ok().bodyValue(products))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue(
-                        "Error al obtener productos con máximo stock: " + error.getMessage()));
+        .flatMap(products -> ServerResponse.ok().bodyValue(products));
   }
 
   public Mono<ServerResponse> updateFranchiseName(ServerRequest serverRequest) {
@@ -109,12 +84,7 @@ public class Handler {
               String newName = body.get("name").toString();
               return franchiseUseCase.updateName(franchiseId, newName);
             })
-        .flatMap(franchise -> ServerResponse.ok().bodyValue(franchise))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue(
-                        "Error al actualizar el nombre de la franquicia: " + error.getMessage()));
+        .flatMap(franchise -> ServerResponse.ok().bodyValue(franchise));
   }
 
   public Mono<ServerResponse> updateSucursalName(ServerRequest serverRequest) {
@@ -127,12 +97,7 @@ public class Handler {
               String newName = body.get("name").toString();
               return sucursalUseCase.updateName(sucursalId, newName);
             })
-        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue(
-                        "Error al actualizar el nombre de la sucursal: " + error.getMessage()));
+        .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal));
   }
 
   public Mono<ServerResponse> updateProductName(ServerRequest serverRequest) {
@@ -145,11 +110,6 @@ public class Handler {
               String newName = body.get("name").toString();
               return productUseCase.updateName(productId, newName);
             })
-        .flatMap(product -> ServerResponse.ok().bodyValue(product))
-        .onErrorResume(
-            error ->
-                ServerResponse.badRequest()
-                    .bodyValue(
-                        "Error al actualizar el nombre del producto: " + error.getMessage()));
+        .flatMap(product -> ServerResponse.ok().bodyValue(product));
   }
 }

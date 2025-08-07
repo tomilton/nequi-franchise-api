@@ -3,6 +3,9 @@ package co.com.nequi.api;
 import co.com.nequi.model.franchise.Franchise;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.sucursal.Sucursal;
+import co.com.nequi.model.exception.InfrastructureException;
+import co.com.nequi.model.exception.ErrorResponse;
+import co.com.nequi.model.enums.InfrastructureError;
 import co.com.nequi.usecase.franchise.FranchiseUseCase;
 import co.com.nequi.usecase.product.ProductUseCase;
 import co.com.nequi.usecase.sucursal.SucursalUseCase;
@@ -246,7 +249,7 @@ class RouterRestTest {
         // Arrange
         Franchise franchise = Franchise.builder().name("Test Franchise").build();
         when(franchiseUseCase.save(any(Franchise.class)))
-                .thenReturn(Mono.error(new RuntimeException("Error creating franchise")));
+                .thenReturn(Mono.error(new InfrastructureException(InfrastructureError.DB_ERROR, "Error creating franchise")));
 
         // Act & Assert
         webTestClient.post()
@@ -254,16 +257,19 @@ class RouterRestTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(franchise)
                 .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(String.class)
-                .value(response -> assertTrue(response.contains("Error al crear la franquicia")));
+                .expectStatus().is5xxServerError()
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assertEquals("DB_ERROR", response.getCode());
+                    assertEquals("Technical error with DB", response.getMessage());
+                });
     }
 
     @Test
     void testUpdateProductStock_ShouldReturnError_WhenUseCaseFails() {
         // Arrange
         when(productUseCase.updateStock(anyInt(), anyInt()))
-                .thenReturn(Mono.error(new RuntimeException("Error updating stock")));
+                .thenReturn(Mono.error(new InfrastructureException(InfrastructureError.DB_ERROR, "Error updating stock")));
 
         // Act & Assert
         webTestClient.put()
@@ -272,15 +278,18 @@ class RouterRestTest {
                 .bodyValue(Map.of("stock", 150))
                 .exchange()
                 .expectStatus().isBadRequest()
-                .expectBody(String.class)
-                .value(response -> assertTrue(response.contains("Error al actualizar el stock del producto")));
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assertEquals("DB_ERROR", response.getCode());
+                    assertEquals("Technical error with DB", response.getMessage());
+                });
     }
 
     @Test
     void testGetProductsWithMaxStockByFranchise_ShouldReturnError_WhenUseCaseFails() {
         // Arrange
         when(productUseCase.findProductsWithMaxStockByFranchise(anyInt()))
-                .thenReturn(Flux.error(new RuntimeException("Error finding products")));
+                .thenReturn(Flux.error(new InfrastructureException(InfrastructureError.DB_ERROR, "Error finding products")));
 
         // Act & Assert
         webTestClient.get()
@@ -288,7 +297,10 @@ class RouterRestTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isBadRequest()
-                .expectBody(String.class)
-                .value(response -> assertTrue(response.contains("Error al obtener productos con máximo stock")));
+                .expectBody(ErrorResponse.class)
+                .value(response -> {
+                    assertEquals("DB_ERROR", response.getCode());
+                    assertEquals("Technical error with DB", response.getMessage());
+                });
     }
 }
