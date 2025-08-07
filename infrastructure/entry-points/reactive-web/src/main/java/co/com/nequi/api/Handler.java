@@ -70,13 +70,14 @@ public class Handler {
 
   public Mono<ServerResponse> updateProductStock(ServerRequest serverRequest) {
     Integer productId = Integer.valueOf(serverRequest.pathVariable("productId"));
-    
+
     return serverRequest
         .bodyToMono(Map.class)
-        .flatMap(body -> {
-          Integer newStock = Integer.valueOf(body.get("stock").toString());
-          return productUseCase.updateStock(productId, newStock);
-        })
+        .flatMap(
+            body -> {
+              Integer newStock = Integer.valueOf(body.get("stock").toString());
+              return productUseCase.updateStock(productId, newStock);
+            })
         .flatMap(product -> ServerResponse.ok().bodyValue(product))
         .onErrorResume(
             error ->
@@ -86,7 +87,7 @@ public class Handler {
 
   public Mono<ServerResponse> getProductsWithMaxStockByFranchise(ServerRequest serverRequest) {
     Integer franchiseId = Integer.valueOf(serverRequest.pathVariable("franchiseId"));
-    
+
     return productUseCase
         .findProductsWithMaxStockByFranchise(franchiseId)
         .collectList()
@@ -94,54 +95,61 @@ public class Handler {
         .onErrorResume(
             error ->
                 ServerResponse.badRequest()
-                    .bodyValue("Error al obtener productos con máximo stock: " + error.getMessage()));
+                    .bodyValue(
+                        "Error al obtener productos con máximo stock: " + error.getMessage()));
   }
 
   public Mono<ServerResponse> updateFranchiseName(ServerRequest serverRequest) {
     Integer franchiseId = Integer.valueOf(serverRequest.pathVariable("franchiseId"));
-    
+
     return serverRequest
         .bodyToMono(Map.class)
-        .flatMap(body -> {
-          String newName = body.get("name").toString();
-          return franchiseUseCase.updateName(franchiseId, newName);
-        })
+        .flatMap(
+            body -> {
+              String newName = body.get("name").toString();
+              return franchiseUseCase.updateName(franchiseId, newName);
+            })
         .flatMap(franchise -> ServerResponse.ok().bodyValue(franchise))
         .onErrorResume(
             error ->
                 ServerResponse.badRequest()
-                    .bodyValue("Error al actualizar el nombre de la franquicia: " + error.getMessage()));
+                    .bodyValue(
+                        "Error al actualizar el nombre de la franquicia: " + error.getMessage()));
   }
 
   public Mono<ServerResponse> updateSucursalName(ServerRequest serverRequest) {
     Integer sucursalId = Integer.valueOf(serverRequest.pathVariable("sucursalId"));
-    
+
     return serverRequest
         .bodyToMono(Map.class)
-        .flatMap(body -> {
-          String newName = body.get("name").toString();
-          return sucursalUseCase.updateName(sucursalId, newName);
-        })
+        .flatMap(
+            body -> {
+              String newName = body.get("name").toString();
+              return sucursalUseCase.updateName(sucursalId, newName);
+            })
         .flatMap(sucursal -> ServerResponse.ok().bodyValue(sucursal))
         .onErrorResume(
             error ->
                 ServerResponse.badRequest()
-                    .bodyValue("Error al actualizar el nombre de la sucursal: " + error.getMessage()));
+                    .bodyValue(
+                        "Error al actualizar el nombre de la sucursal: " + error.getMessage()));
   }
 
   public Mono<ServerResponse> updateProductName(ServerRequest serverRequest) {
     Integer productId = Integer.valueOf(serverRequest.pathVariable("productId"));
-    
+
     return serverRequest
         .bodyToMono(Map.class)
-        .flatMap(body -> {
-          String newName = body.get("name").toString();
-          return productUseCase.updateName(productId, newName);
-        })
+        .flatMap(
+            body -> {
+              String newName = body.get("name").toString();
+              return productUseCase.updateName(productId, newName);
+            })
         .flatMap(product -> ServerResponse.ok().bodyValue(product))
         .onErrorResume(
             error ->
                 ServerResponse.badRequest()
-                    .bodyValue("Error al actualizar el nombre del producto: " + error.getMessage()));
+                    .bodyValue(
+                        "Error al actualizar el nombre del producto: " + error.getMessage()));
   }
 }
