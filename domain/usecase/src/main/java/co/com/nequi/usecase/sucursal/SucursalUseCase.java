@@ -13,4 +13,8 @@ public class SucursalUseCase {
   public Mono<Sucursal> save(Sucursal sucursal) {
     return sucursalRepository.save(sucursal);
   }
+  
+  public Mono<Sucursal> updateName(Integer sucursalId, String newName) {
+    return sucursalRepository.updateName(sucursalId, newName);
+  }
 }

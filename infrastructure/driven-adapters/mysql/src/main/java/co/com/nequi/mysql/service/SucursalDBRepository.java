@@ -21,4 +21,12 @@ public class SucursalDBRepository implements SucursalRepository {
         .save(sucursalMapper.toEntity(sucursal))
         .map(sucursalMapper::toDomain);
   }
+
+  @Override
+  public Mono<Sucursal> updateName(Integer sucursalId, String newName) {
+    return sucursalReactiveRepository
+        .updateNameById(newName, sucursalId)
+        .then(sucursalReactiveRepository.findById(sucursalId))
+        .map(sucursalMapper::toDomain);
+  }
 }
