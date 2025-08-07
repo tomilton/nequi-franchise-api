@@ -21,4 +21,12 @@ public class FranchiseDBRepository implements FranchiseRepository {
         .save(franchiseMapper.toEntity(franchise))
         .map(franchiseMapper::toDomain);
   }
+
+  @Override
+  public Mono<Franchise> updateName(Integer franchiseId, String newName) {
+    return franchiseReactiveRepository
+        .updateNameById(newName, franchiseId)
+        .then(franchiseReactiveRepository.findById(franchiseId))
+        .map(franchiseMapper::toDomain);
+  }
 }
