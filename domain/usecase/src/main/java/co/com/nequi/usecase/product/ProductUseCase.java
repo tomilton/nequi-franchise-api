@@ -3,6 +3,7 @@ package co.com.nequi.usecase.product;
 import co.com.nequi.model.product.Product;
 import co.com.nequi.model.product.gateways.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
@@ -20,5 +21,9 @@ public class ProductUseCase {
   
   public Mono<Product> updateStock(Integer productId, Integer newStock) {
     return productRepository.updateStock(productId, newStock);
+  }
+  
+  public Flux<Product> findProductsWithMaxStockByFranchise(Integer franchiseId) {
+    return productRepository.findProductsWithMaxStockByFranchise(franchiseId);
   }
 }

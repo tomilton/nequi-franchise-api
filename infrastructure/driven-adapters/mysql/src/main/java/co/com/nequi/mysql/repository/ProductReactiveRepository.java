@@ -19,4 +19,17 @@ public interface ProductReactiveRepository extends ReactiveCrudRepository<Produc
 
   @Query("UPDATE product SET stock = :newStock, updated_at = NOW() WHERE id = :id")
   Mono<Integer> updateStockById(Integer newStock, Integer id);
+  
+  @Query("""
+      SELECT p.* FROM product p
+      INNER JOIN sucursal s ON p.sucursal_id = s.id
+      WHERE s.franchise_id = :franchiseId
+      AND p.stock = (
+          SELECT MAX(p2.stock)
+          FROM product p2
+          WHERE p2.sucursal_id = p.sucursal_id
+      )
+      ORDER BY s.id, p.stock DESC
+      """)
+  Flux<ProductEntity> findProductsWithMaxStockByFranchise(Integer franchiseId);
 }
