@@ -198,24 +198,33 @@ La API está configurada para aceptar peticiones desde:
 
 ### Construir imagen Docker
 ```bash
-./gradlew bootBuildImage
+  docker build -t miltonsanchez/nequi-franchise-api . -f deployment/Dockerfile
 ```
-
+### Publicar imagen Docker en Docker Hub
+```bash
+  docker login
+```
+```bash
+  docker tag miltonsanchez/nequi-franchise-api:latest miltonsanchez/nequi-franchise-api:latest
+```
+```bash
+  docker push miltonsanchez/nequi-franchise-api:latest
+```
 ### Ejecutar con Docker
 ```bash
-docker run -p 8080:8080 nequi-franchise-api:latest
+  docker run -p 8080:8080 miltonsanchez/nequi-franchise-api:latest
 ```
 
 ## 📈 Monitoreo
 
 ### Health Check
 ```bash
-curl http://localhost:8080/actuator/health
+ curl http://localhost:8080/actuator/health
 ```
 
 ### Métricas Prometheus
 ```bash
-curl http://localhost:8080/actuator/prometheus
+ curl http://localhost:8080/actuator/prometheus
 ```
 
 ## 🛠️ Desarrollo
