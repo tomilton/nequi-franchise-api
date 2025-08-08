@@ -63,9 +63,10 @@ nequi-franchise-api/
    cd nequi-franchise-api
    ```
 
-2. **Levantar la base de datos MySQL**
+2. **Levantar el api y la base de datos MySQL, tener en cuenta los pasos de construir la imagen con docker,
+   por defecto el docker-compose tomara la imagen de dockerhub miltonsanchez/nequi-franchise-api:latest**
    ```bash
-   docker-compose up -d mysql
+   docker-compose up -d
    ```
 
 3. **Verificar que MySQL esté funcionando**
