@@ -83,7 +83,7 @@ Resources:
   RdsSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
-      DBSubnetGroupDescription: 'Subnet group para RDS MySQL (importado del entorno actual)'
+      DBSubnetGroupDescription: 'Subnet group para RDS MySQL'
       SubnetIds: !Ref SubnetIds
       Tags:
         - Key: Name
