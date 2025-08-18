@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RDS MySQL (nequi-franchise)'
+
+Parameters:
+  DBInstanceIdentifier:
+    Type: String
+    Default: nequi-franchise
+    Description: Identificador de la instancia RDS.
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-0bfcec1b4c1cbd2d4
+    Description: VPC donde se creará la DB.
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Default: subnet-0244b411da5bc62f3,subnet-0d3346f29e7837a20,subnet-04476f3e1c4b1d2ce,subnet-0c791e6f7fb85f3f2,subnet-0cfa9d9a18aa08201,subnet-0885f7e3407e9a5e6
+    Description: Subnets para el DBSubnetGroup (mínimo 2 AZs).
+  VpcSecurityGroupIds:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Default: sg-01a2cb3cee68bfead
+    Description: SGs que tendrán acceso a MySQL (3306).
+  MasterUsername:
+    Type: String
+    Default: root
+    Description: Usuario maestro de la base.
+  MasterUserPassword:
+    Type: String
+    NoEcho: true
+    Description: Contraseña del usuario maestro.
+  EngineVersion:
+    Type: String
+    Default: '8.0.42'
+    Description: Versión de MySQL.
+  DBInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+    Description: Clase de instancia.
+  AllocatedStorage:
+    Type: Number
+    Default: 400
+    Description: GB de almacenamiento (gp2).
+  MaxAllocatedStorage:
+    Type: Number
+    Default: 1000
+    Description: Autoscaling máximo de almacenamiento (GB).
+  BackupRetentionPeriod:
+    Type: Number
+    Default: 1
+    Description: Días de retención de backups automáticos.
+  PreferredBackupWindow:
+    Type: String
+    Default: '04:23-04:53'
+    Description: Ventana de backup (UTC).
+  PreferredMaintenanceWindow:
+    Type: String
+    Default: 'tue:08:08-tue:08:38'
+    Description: Ventana de mantenimiento (UTC).
+  PubliclyAccessible:
+    Type: String
+    AllowedValues: ['true','false']
+    Default: 'true'
+    Description: Si el endpoint será público.
+  MultiAZ:
+    Type: String
+    AllowedValues: ['true','false']
+    Default: 'false'
+    Description: Multi-AZ.
+  StorageEncrypted:
+    Type: String
+    AllowedValues: ['true','false']
+    Default: 'true'
+    Description: Cifrado de almacenamiento.
+  KmsKeyId:
+    Type: String
+    Default: arn:aws:kms:us-east-1:339105150243:key/d686649a-9d76-4399-a98d-a752673d726d
+    Description: KMS Key para cifrado.
+  CopyTagsToSnapshot:
+    Type: String
+    AllowedValues: ['true','false']
+    Default: 'true'
+    Description: Copiar tags a snapshots.
+
+Resources:
+  RdsSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: 'Subnet group para RDS MySQL (importado del entorno actual)'
+      SubnetIds: !Ref SubnetIds
+      Tags:
+        - Key: Name
+          Value: nequi-franchise-dbsubnetgroup
+
+  RdsInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      Engine: mysql
+      EngineVersion: !Ref EngineVersion
+      LicenseModel: general-public-license
+
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref AllocatedStorage
+      MaxAllocatedStorage: !Ref MaxAllocatedStorage
+      StorageType: gp2
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: !Ref BackupRetentionPeriod
+      PreferredBackupWindow: !Ref PreferredBackupWindow
+      PreferredMaintenanceWindow: !Ref PreferredMaintenanceWindow
+
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+
+      DBSubnetGroupName: !Ref RdsSubnetGroup
+      VPCSecurityGroups: !Ref VpcSecurityGroupIds
+      PubliclyAccessible: !Ref PubliclyAccessible
+      MultiAZ: !Ref MultiAZ
+      StorageEncrypted: !Ref StorageEncrypted
+      KmsKeyId: !Ref KmsKeyId
+      CopyTagsToSnapshot: !Ref CopyTagsToSnapshot
+      NetworkType: IPV4
+      Port: 3306
+
+      PerformanceInsightsEnabled: false
+      DeletionProtection: false
+      MonitoringInterval: 0
+      DBParameterGroupName: default.mysql8.0
+      OptionGroupName: default:mysql-8-0
+
+Outputs:
+  DBInstanceArn:
+    Value: !Ref RdsInstance
+    Description: ARN de la instancia
+  DBEndpointAddress:
+    Value: !GetAtt RdsInstance.Endpoint.Address
+    Description: Endpoint para conectarse
+  DBEndpointPort:
+    Value: !GetAtt RdsInstance.Endpoint.Port
+    Description: Puerto de conexión
