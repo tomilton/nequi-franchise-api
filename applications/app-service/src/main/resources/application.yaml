@@ -6,9 +6,9 @@ spring:
   devtools:
     add-properties: false
   r2dbc:
-    url: ${SPRING_R2DBC_URL:r2dbc:mysql://localhost:3306/nequi_franchise}
+    url: ${SPRING_R2DBC_URL:r2dbc:mysql://nequi-franchise.c0niimgysyda.us-east-1.rds.amazonaws.com:3306/nequi_franchise}
     username: ${SPRING_R2DBC_USERNAME:root}
-    password: ${SPRING_R2DBC_PASSWORD:password}
+    password: ${SPRING_R2DBC_PASSWORD:root1234}
   h2:
     console:
       enabled: true
