@@ -121,7 +121,7 @@ Resources:
       NetworkType: IPV4
       Port: 3306
 
-      PerformanceInsightsEnabled: false
+      EnablePerformanceInsights: false
       DeletionProtection: false
       MonitoringInterval: 0
       DBParameterGroupName: default.mysql8.0
