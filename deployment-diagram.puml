@@ -1,0 +1,76 @@
+@startuml
+left to right direction
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam defaultFontName Monospace
+
+cloud "Internet" as internet
+cloud "Docker Hub" as dockerhub
+rectangle "AWS CloudFormation\nStack: aws-cf-stack-nequi" as cfn
+
+node "AWS VPC" as vpc {
+  node "Subred Pública" as pub {
+    node "EC2 t3.micro\nAmazon Linux" as ec2 {
+      node "Docker Compose" as compose
+      node "Contenedor: Franchise API" as api {
+        package "Arquitectura interna" as capas {
+          package "Infrastructure (Technology Concrete Components)" as infra {
+            package "Entry Points" as ep {
+              component "Web EndPoints\n(RouterRest/Handler)" as web
+              component "Scheduler" as scheduler
+              component "Message Boxes" as msg
+            }
+            package "Domain" as dom {
+              component "UseCase" as uc
+              component "Entities (Model and Ports)" as entports
+            }
+            package "Gateways" as gws {
+              component "Entities Repository\n(MySQL R2DBC)" as repo
+              component "Identity Provider" as idp
+              component "External Adapter N" as ext
+            }
+            web --> uc
+            scheduler --> uc
+            msg --> uc
+            uc --> entports
+            entports --> repo
+            entports --> idp
+            entports --> ext
+          }
+        }
+      }
+    }
+  }
+  node "Subred Privada" as priv {
+    database "Amazon Aurora MySQL (RDS)" as rds
+  }
+}
+
+internet --> ec2 : SSH 22\nHTTP 8080
+mysqlAdapter --> rds : R2DBC MySQL 3306
+ec2 --> dockerhub : HTTPS 443\n(docker pull)
+cfn --> rds
+note on link
+Aprovisionamiento (API de AWS)
+end note
+
+note right of ec2
+Security Group EC2:
+- Entrantes: 22 SSH y 8080 HTTP desde mi IP
+- Salientes: 443 a Internet (para Docker Hub)
+end note
+
+note right of rds
+Security Group RDS:
+- Entrantes 3306 MySQL solo desde el SG de la EC2
+end note
+
+note bottom of api
+Variables de entorno:
+- SPRING_R2DBC_URL=r2dbc:mysql://<endpoint>:3306/<db>
+- SPRING_R2DBC_USERNAME=<user>
+- SPRING_R2DBC_PASSWORD=<secret>
+- (Opc.) SPRING_R2DBC_POOL_ENABLED=true
+end note
+@enduml
+
