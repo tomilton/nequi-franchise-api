@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS nequi_franchise
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- Tabla para Franquicias
 CREATE TABLE franchise (
                            id INT AUTO_INCREMENT PRIMARY KEY,
