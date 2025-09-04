@@ -216,6 +216,71 @@ La API está configurada para aceptar peticiones desde:
   docker run -p 8080:8080 miltonsanchez/nequi-franchise-api:latest
 ```
 
+## ☁️ Despliegue en AWS
+
+### Base de Datos RDS con CloudFormation
+
+El proyecto incluye un template de CloudFormation para crear una instancia RDS MySQL en AWS. El archivo `rds-nequi-franchise.yml` define una instancia MySQL 8.0 con las siguientes características:
+
+#### Parámetros principales:
+- **DBInstanceIdentifier**: `nequi-franchise`
+- **EngineVersion**: MySQL 8.0.42
+- **DBInstanceClass**: db.t4g.micro
+- **AllocatedStorage**: 400 GB (gp2)
+- **MaxAllocatedStorage**: 1000 GB (autoscaling)
+- **StorageEncrypted**: true (cifrado habilitado)
+- **PubliclyAccessible**: true
+- **MultiAZ**: false
+
+#### Desplegar la base de datos:
+
+1. **Usando AWS CLI**:
+   ```bash
+   aws cloudformation create-stack \
+     --stack-name nequi-franchise-rds \
+     --template-body file://rds-nequi-franchise.yml \
+     --parameters ParameterKey=MasterUserPassword,ParameterValue=TuContraseñaSegura \
+     --capabilities CAPABILITY_IAM
+   ```
+
+2. **Usando AWS Console**:
+   - Ir a CloudFormation en AWS Console
+   - Crear stack nuevo
+   - Subir el archivo `rds-nequi-franchise.yml`
+   - Configurar parámetros (especialmente la contraseña)
+   - Crear stack
+
+3. **Verificar el despliegue**:
+   ```bash
+   aws cloudformation describe-stacks --stack-name nequi-franchise-rds
+   ```
+
+#### Configurar la aplicación para RDS:
+
+Una vez desplegada la base de datos, actualiza las variables de entorno:
+
+```bash
+export SPRING_R2DBC_URL=r2dbc:mysql://[ENDPOINT_RDS]:3306/nequi_franchise
+export SPRING_R2DBC_USERNAME=root
+export SPRING_R2DBC_PASSWORD=TuContraseñaSegura
+```
+
+#### Obtener el endpoint de RDS:
+
+```bash
+aws cloudformation describe-stacks \
+  --stack-name nequi-franchise-rds \
+  --query 'Stacks[0].Outputs[?OutputKey==`DBEndpointAddress`].OutputValue' \
+  --output text
+```
+
+### Consideraciones de seguridad:
+
+- La instancia RDS está configurada con cifrado de almacenamiento
+- Se recomienda configurar Security Groups apropiados
+- Considerar habilitar Multi-AZ para producción
+- Configurar backups automáticos según necesidades
+
 ## 📈 Monitoreo
 
 ### Health Check
