@@ -1,40 +1,16 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: nequi-franchise-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: nequi_franchise
-      MYSQL_USER: nequi
-      MYSQL_PASSWORD: nequi123
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./db.sql:/docker-entrypoint-initdb.d/01-init.sql
-    command: --default-authentication-plugin=mysql_native_password
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-    networks:
-      - nequi-network
-
   api:
     image: miltonsanchez/nequi-franchise-api:latest
     container_name: nequi-franchise-api
-    depends_on:
-      mysql:
-        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
       # R2DBC apunta al nombre del servicio (mysql)
-      SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/nequi_franchise
-      SPRING_R2DBC_USERNAME: nequi
-      SPRING_R2DBC_PASSWORD: nequi123
+      SPRING_R2DBC_URL: r2dbc:mysql://nequi-franchise.c0niimgysyda.us-east-1.rds.amazonaws.com:3306/nequi_franchise
+      SPRING_R2DBC_USERNAME: root
+      SPRING_R2DBC_PASSWORD: root1234
       SPRING_PROFILES_ACTIVE: docker
     networks:
       - nequi-network
