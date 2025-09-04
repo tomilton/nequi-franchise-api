@@ -281,6 +281,48 @@ aws cloudformation describe-stacks \
 - Considerar habilitar Multi-AZ para producción
 - Configurar backups automáticos según necesidades
 
+### Estado del Despliegue en AWS
+
+La aplicación se encuentra desplegada exitosamente en AWS con los siguientes recursos:
+
+#### CloudFormation Stack
+![CloudFormation Stack](images/CloudFormation%20Stack.png)
+*Stack de CloudFormation "aws-cf-stack-nequi" desplegado exitosamente*
+
+#### Base de Datos RDS
+![RDS Database](images/Base%20de%20Datos%20RDS.png)
+*Instancia RDS MySQL "nequi-franchise" disponible y funcionando*
+
+#### Instancia EC2
+![EC2 Instance](images/Instancia%20EC2.png)
+*Instancia EC2 "ec2-nequi" ejecutándose en us-east-1a*
+
+### Ejemplo de Uso en AWS
+
+Una vez desplegada la aplicación, puedes probar los endpoints usando la instancia EC2:
+
+```bash
+# Obtener productos con máximo stock por franquicia
+curl --location 'http://ec2-98-87-18-51.compute-1.amazonaws.com:8080/api/franchise/1/products/max-stock'
+
+# Crear una nueva franquicia
+curl --location 'http://ec2-98-87-18-51.compute-1.amazonaws.com:8080/api/franchise' \
+  --header 'Content-Type: application/json' \
+  --data '{"name": "Mi Franquicia AWS"}'
+
+# Crear una sucursal
+curl --location 'http://ec2-98-87-18-51.compute-1.amazonaws.com:8080/api/sucursal' \
+  --header 'Content-Type: application/json' \
+  --data '{"franchiseId": 1, "name": "Sucursal AWS"}'
+
+# Crear un producto
+curl --location 'http://ec2-98-87-18-51.compute-1.amazonaws.com:8080/api/product' \
+  --header 'Content-Type: application/json' \
+  --data '{"sucursalId": 1, "name": "Producto AWS", "stock": 100}'
+```
+
+**Nota**: Reemplaza la IP `98.87.18.51` con la IP pública actual de tu instancia EC2 si ha cambiado.
+
 ## 📈 Monitoreo
 
 ### Health Check
